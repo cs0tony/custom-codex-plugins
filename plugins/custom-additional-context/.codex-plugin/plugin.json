@@ -9,7 +9,7 @@
   "homepage": "https://github.com/gh-cs0tony/custom-codex-plugins",
   "license": "MIT",
   "keywords": ["hooks", "additional-context", "customization"],
-  "hooks": "./hooks/",
+  "hooks": "./hooks/codex.hooks.json",
   "settings": {
     "additionalContext": {
       "type": "string",
