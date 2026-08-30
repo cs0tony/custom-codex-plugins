@@ -1,0 +1,20 @@
+{
+  "name": "example-plugin",
+  "version": "1.0.0",
+  "description": "Example plugin for custom Codex plugin marketplace",
+  "author": {
+    "name": "Plugin Developer",
+    "email": "developer@example.com"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Example Plugin",
+    "shortDescription": "An example plugin for the custom marketplace",
+    "longDescription": "This is an example plugin that demonstrates how to structure plugins for the custom Codex plugin marketplace.",
+    "developerName": "Plugin Developer",
+    "category": "Productivity",
+    "capabilities": [],
+    "defaultPrompt": "Help me use the example plugin.",
+    "brandColor": "#3B82F6"
+  }
+}
