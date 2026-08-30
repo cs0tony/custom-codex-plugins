@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "echo \"Hello\"",
+            "command": "echo ~/.codex/custom-additional-context/cac.md",
             "timeout": 30,
             "statusMessage": "Injecting custom additional context",
             "additionalContextLimit": 5000
