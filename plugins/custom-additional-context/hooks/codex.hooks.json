@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "echo \"如果要修改文件，请使用apply_patch工具\"",
+            "command": "node \"${PLUGIN_ROOT}/hooks/user-prompt-submit-hook.js\"",
             "timeout": 30,
             "statusMessage": "Injecting custom additional context",
             "additionalContextLimit": 5000
