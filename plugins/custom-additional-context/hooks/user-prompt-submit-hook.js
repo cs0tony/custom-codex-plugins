@@ -7,7 +7,7 @@ const path = require('path');
 function readStdin() {
   return new Promise((resolve, reject) => {
     let data = '';
-    process.stdin.on('data', (chunk) => {
+    process.stdin.on('data', chunk => {
       data += chunk;
     });
     process.stdin.on('end', () => {
@@ -47,7 +47,7 @@ function getPluginSettings() {
     pluginName,
     'settings.json'
   );
-  
+
   if (fs.existsSync(settingsDir)) {
     try {
       const settings = JSON.parse(fs.readFileSync(settingsDir, 'utf8'));
@@ -66,7 +66,7 @@ function getPluginSettings() {
     'plugins',
     'settings.json'
   );
-  
+
   if (fs.existsSync(globalSettingsPath)) {
     try {
       const globalSettings = JSON.parse(fs.readFileSync(globalSettingsPath, 'utf8'));
@@ -85,21 +85,24 @@ async function main() {
   try {
     // Read hook input
     const input = await readStdin();
-    
+
     // Get plugin settings
     const customContext = getPluginSettings();
-    
+
     // If no custom context, return empty object
     if (!customContext.trim()) {
       console.log(JSON.stringify({}));
       return;
     }
-    
+
     // Return additional context response
     const result = {
-      additionalContext: customContext
+      hookSpecificOutput: {
+        hookEventName: 'UserPromptSubmit',
+        additionalContext: customContext
+      }
     };
-    
+
     console.log(JSON.stringify(result));
   } catch (error) {
     console.error('Hook error:', error.message);
