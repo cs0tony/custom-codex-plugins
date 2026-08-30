@@ -1,0 +1,18 @@
+{
+  "description": "Custom Additional Context Hook - Uses standard Codex hooks format",
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node hooks/user-prompt-submit-hook.js",
+            "timeout": 30,
+            "statusMessage": "Injecting custom additional context",
+            "additionalContextLimit": 5000
+          }
+        ]
+      }
+    ]
+  }
+}

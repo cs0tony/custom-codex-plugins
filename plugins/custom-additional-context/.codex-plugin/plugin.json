@@ -1,0 +1,34 @@
+{
+  "name": "custom-additional-context",
+  "version": "2.0.0",
+  "description": "Automatically inject custom additional context into each conversation using UserPromptSubmit hook",
+  "author": {
+    "name": "Tony",
+    "email": "tony@example.com"
+  },
+  "homepage": "https://github.com/gh-cs0tony/custom-codex-plugins",
+  "license": "MIT",
+  "keywords": ["hooks", "additional-context", "customization"],
+  "hooks": "./hooks/",
+  "settings": {
+    "additionalContext": {
+      "type": "string",
+      "default": "",
+      "description": "Custom additional context that will be injected before each user message in conversations"
+    }
+  },
+  "interface": {
+    "displayName": "Custom Additional Context",
+    "shortDescription": "Inject custom context into conversations",
+    "longDescription": "This plugin uses the UserPromptSubmit hook to automatically inject custom additional context into each conversation. Configure your custom context in the plugin settings.",
+    "developerName": "Tony",
+    "category": "Productivity",
+    "capabilities": ["Interactive", "Settings"],
+    "defaultPrompt": [
+      "Set up my custom additional context for all conversations.",
+      "Configure additional context to be injected automatically.",
+      "Add custom instructions for AI responses."
+    ],
+    "brandColor": "#10B981"
+  }
+}
