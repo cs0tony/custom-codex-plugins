@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${PLUGIN_ROOT}/hooks/user-prompt-submit-hook.js\"",
+            "command": "node ${PLUGIN_ROOT}/hooks/user-prompt-submit-hook.js",
             "timeout": 30,
             "statusMessage": "Injecting custom additional context",
             "additionalContextLimit": 5000
