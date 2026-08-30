@@ -2,6 +2,68 @@ const fs = require('fs');
 const path = require('path');
 
 /**
+ * Get log file path for the plugin
+ * @returns {string} Path to log file
+ */
+function getLogFilePath() {
+  const logDir = path.join(
+    process.env.HOME || process.env.USERPROFILE || process.cwd(),
+    '.codex',
+    'plugins',
+    'custom-additional-context',
+    'logs'
+  );
+
+  // Create log directory if it doesn't exist
+  if (!fs.existsSync(logDir)) {
+    try {
+      fs.mkdirSync(logDir, { recursive: true });
+    } catch (error) {
+      console.error('Failed to create log directory:', error.message);
+      // Fallback to temp directory
+      const tempDir = path.join(process.env.TEMP || process.env.TMP || '/tmp', 'custom-additional-context');
+      if (!fs.existsSync(tempDir)) {
+        fs.mkdirSync(tempDir, { recursive: true });
+      }
+      return path.join(tempDir, 'log.txt');
+    }
+  }
+
+  return path.join(logDir, 'log.txt');
+}
+
+/**
+ * Write log entry with timestamp and result
+ * @param {Object} result - The result object to log
+ * @param {Object} input - The input object (optional, for context)
+ */
+function writeToLogFile(result, input = {}) {
+  try {
+    const logFilePath = getLogFilePath();
+    const timestamp = new Date().toISOString();
+    const logEntry = {
+      timestamp,
+      input: {
+        conversationId: input.conversationId || 'unknown',
+        messageId: input.messageId || 'unknown'
+      },
+      result: {
+        hasContext: !!(result.hookSpecificOutput && result.hookSpecificOutput.additionalContext),
+        contextLength:
+          result.hookSpecificOutput && result.hookSpecificOutput.additionalContext
+            ? result.hookSpecificOutput.additionalContext.length
+            : 0
+      }
+    };
+
+    const logLine = `${timestamp} | ${JSON.stringify(logEntry)}\n`;
+    fs.appendFileSync(logFilePath, logLine, 'utf8');
+  } catch (error) {
+    console.error('Failed to write to log file:', error.message);
+  }
+}
+
+/**
  * Read JSON data from stdin
  */
 function readStdin() {
@@ -92,6 +154,8 @@ async function main() {
     // If no custom context, return empty object
     if (!customContext.trim()) {
       console.log(JSON.stringify({}));
+      // Log that no context was found
+      writeToLogFile({}, input);
       return;
     }
 
@@ -102,6 +166,9 @@ async function main() {
         additionalContext: customContext
       }
     };
+
+    // 将当前时间和result写入log.txt日志文件
+    writeToLogFile(result, input);
 
     console.log(JSON.stringify(result));
   } catch (error) {
