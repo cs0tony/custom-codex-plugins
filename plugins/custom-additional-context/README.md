@@ -9,6 +9,7 @@ This plugin automatically injects custom additional context into each conversati
 - ✅ Easy to edit and update context
 - ✅ Supports multi-line formatting and rich content
 - ✅ Cross-platform support (Windows, macOS, Linux)
+- ✅ One-click setup from GitHub
 - ✅ Graceful error handling with detailed logging
 
 ## Installation
@@ -19,34 +20,69 @@ This plugin is available in the custom-codex-plugins marketplace. To install it:
 codex plugin add custom-additional-context@custom-codex-plugins
 ```
 
-## Quick Setup
+## 🚀 One-Click Setup (Recommended)
 
-### One-Command Setup
+### macOS/Linux
 
-Choose the command based on your operating system:
+**Using curl (Recommended):**
 
-#### macOS/Linux (Bash/Zsh)
 ```bash
-# Run the setup script
-bash ~/.codex/plugins/custom-additional-context/scripts/setup.sh
+curl -fsSL https://raw.githubusercontent.com/cs0tony/custom-codex-plugins/main/plugins/custom-additional-context/scripts/setup.sh | bash
+```
 
-# Or manually create the directory and file
+**Using wget:**
+
+```bash
+wget -qO- https://raw.githubusercontent.com/cs0tony/custom-codex-plugins/main/plugins/custom-additional-context/scripts/setup.sh | bash
+```
+
+**Locally**
+
+```bash
+bash ~/.codex/plugins/custom-additional-context/scripts/setup.sh
+```
+
+### Windows
+
+**PowerShell (Recommended):**
+
+```powershell
+irm https://raw.githubusercontent.com/cs0tony/custom-codex-plugins/main/plugins/custom-additional-context/scripts/setup.ps1 | iex
+```
+
+**PowerShell (Alternative):**
+
+```powershell
+Invoke-WebRequest -Uri https://raw.githubusercontent.com/cs0tony/custom-codex-plugins/main/plugins/custom-additional-context/scripts/setup.ps1 -OutFile setup.ps1
+powershell -ExecutionPolicy Bypass -File setup.ps1
+Remove-Item setup.ps1
+```
+
+**Locally**
+
+```bash
+powershell -ExecutionPolicy Bypass -File "$env:USERPROFILE\.codex\plugins\custom-additional-context\scripts\setup.ps1"
+```
+
+## Manual Setup
+
+### macOS/Linux (Bash/Zsh)
+
+```bash
 mkdir -p ~/.codex/plugins-config/custom-additional-context && touch ~/.codex/plugins-config/custom-additional-context/cac.md
 ```
 
-#### Windows (PowerShell)
-```powershell
-# Run the setup script
-powershell -ExecutionPolicy Bypass -File "$env:USERPROFILE\.codex\plugins\custom-additional-context\scripts\setup.ps1"
+### Windows (PowerShell)
 
-# Or manually create the directory and file
+```powershell
 New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.codex\plugins-config\custom-additional-context"
 New-Item -ItemType File -Path "$env:USERPROFILE\.codex\plugins-config\custom-additional-context\cac.md" -Force
 ```
 
-#### Windows (CMD)
+### Windows (CMD)
+
 ```cmd
-mkdir "%USERPROFILE%\.codex\plugins-config\custom-additional-context" 2>nul
+mkdir "%USERPROFILE%\.codex\plugins-config\custom-additional-context"
 type nul > "%USERPROFILE%\.codex\plugins-config\custom-additional-context\cac.md"
 ```
 
@@ -75,11 +111,13 @@ You are a senior software engineer with 10+ years of experience. When writing co
 - Follow security best practices
 
 ## Code Style
+
 - Use meaningful variable and function names
 - Keep functions focused and single-purpose
 - Include unit tests when appropriate
 
 ## Communication Style
+
 - Be concise but thorough
 - Provide examples when helpful
 - Explain trade-offs of different approaches
@@ -101,6 +139,7 @@ Simply edit the `cac.md` file and save it. The plugin will automatically read th
 ### Configuration File Location
 
 The plugin looks for `cac.md` in:
+
 - **Windows**: `%USERPROFILE%\.codex\plugins-config\custom-additional-context\cac.md`
 - **Mac/Linux**: `~/.codex/plugins-config/custom-additional-context/cac.md`
 
@@ -111,13 +150,22 @@ The plugin looks for `cac.md` in:
 - **File Format**: Markdown (any text format works)
 - **Error Handling**: Graceful fallback with detailed error logging
 
+### Remote Setup Scripts
+
+The setup scripts are hosted on GitHub and can be executed directly:
+
+- **Bash**: `https://raw.githubusercontent.com/cs0tony/custom-codex-plugins/main/plugins/custom-additional-context/scripts/setup.sh`
+- **PowerShell**: `https://raw.githubusercontent.com/cs0tony/custom-codex-plugins/main/plugins/custom-additional-context/scripts/setup.ps1`
+
 ### Logging
 
 The plugin maintains a log file at:
+
 - **Windows**: `%USERPROFILE%\.codex\plugins-config\custom-additional-context\logs\log.txt`
 - **Mac/Linux**: `~/.codex/plugins-config/custom-additional-context/logs/log.txt`
 
 Logs include:
+
 - Timestamp of each hook execution
 - Context that was injected
 - Error messages if any issues occur
@@ -127,6 +175,7 @@ Logs include:
 ### Context Not Being Injected
 
 1. **Verify Configuration File**:
+
    ```bash
    # Check if cac.md exists
    ls ~/.codex/plugins-config/custom-additional-context/cac.md
@@ -134,17 +183,19 @@ Logs include:
    dir "%USERPROFILE%\.codex\plugins-config\custom-additional-context\cac.md"
    ```
 
-2. **Check Plugin Installation**: 
+2. **Check Plugin Installation**:
+
    ```bash
    codex plugin list
    ```
+
    Check that `custom-additional-context` is listed
 
-3. **Review Logs**: 
+3. **Review Logs**:
    - Check the log file for error messages
    - Verify the file path is correct
 
-4. **Test Manually**: 
+4. **Test Manually**:
    ```bash
    # Test the hook script
    echo '{}' | node ~/.codex/plugins/custom-additional-context/hooks/user-prompt-submit-hook.js
@@ -152,15 +203,35 @@ Logs include:
 
 ### Setup Script Issues
 
-1. **Permission Errors**: Ensure you have write permissions to your home directory
-2. **Missing Dependencies**: Verify Node.js is installed and accessible
-3. **Path Issues**: Check that the Codex plugins directory exists
+1. **Network Issues**: Ensure you have internet access to GitHub
+2. **Permission Errors**: Ensure you have write permissions to your home directory
+3. **SSL Certificate Issues**: Try using `wget` instead of `curl` on macOS/Linux
+4. **PowerShell Execution Policy**: Use `-ExecutionPolicy Bypass` if needed
+
+### Remote Script Execution Issues
+
+If remote script execution fails:
+
+1. **Check GitHub connectivity**:
+
+   ```bash
+   curl -I https://raw.githubusercontent.com/cs0tony/custom-codex-plugins/main/plugins/custom-additional-context/scripts/setup.sh
+   ```
+
+2. **Use manual setup** as a fallback
+
+3. **Download script first then execute**:
+   ```bash
+   curl -O https://raw.githubusercontent.com/cs0tony/custom-codex-plugins/main/plugins/custom-additional-context/scripts/setup.sh
+   bash setup.sh
+   ```
 
 ## Advanced Usage
 
 ### Dynamic Context Updates
 
 The plugin reads the `cac.md` file each time the hook is triggered, so you can:
+
 - Update context in real-time by editing the file
 - Use version control to manage different context configurations
 - Create different context files for different use cases
@@ -168,6 +239,7 @@ The plugin reads the `cac.md` file each time the hook is triggered, so you can:
 ### Multi-Line Formatting
 
 Since the context file is Markdown, you can use:
+
 - Headers for organization
 - Lists for guidelines
 - Code blocks for examples
@@ -176,10 +248,22 @@ Since the context file is Markdown, you can use:
 ### Context Length Management
 
 If your context exceeds the 5000 character limit:
+
 - Split into multiple focused sections
 - Use concise language
 - Remove redundant information
 - Prioritize the most important guidelines
+
+### Version Control Integration
+
+You can version control your context files:
+
+```bash
+cd ~/.codex/plugins-config/custom-additional-context
+git init
+git add cac.md
+git commit -m "Initial context configuration"
+```
 
 ## Development
 
@@ -198,17 +282,24 @@ echo '{"userMessage":"test"}' | node hooks/user-prompt-submit-hook.js
 ```
 custom-additional-context/
 ├── .codex-plugin/
-│   └── plugin.json          # Plugin manifest
+│   └── plugin.json          # Plugin manifest with remote setup commands
 ├── hooks/
 │   ├── codex.hooks.json     # Hook configuration
 │   └── user-prompt-submit-hook.js  # Main hook script
 ├── scripts/
-│   ├── setup.sh            # macOS/Linux setup script
-│   └── setup.ps1           # Windows setup script
+│   ├── setup.sh            # macOS/Linux setup script (hosted on GitHub)
+│   └── setup.ps1           # Windows setup script (hosted on GitHub)
 ├── README.md               # This file
 ├── USAGE.md               # Usage examples
 └── LICENSE                # MIT License
 ```
+
+### Remote Script URLs
+
+The setup scripts are publicly accessible:
+
+- **Bash**: https://raw.githubusercontent.com/cs0tony/custom-codex-plugins/main/plugins/custom-additional-context/scripts/setup.sh
+- **PowerShell**: https://raw.githubusercontent.com/cs0tony/custom-codex-plugins/main/plugins/custom-additional-context/scripts/setup.ps1
 
 ## Contributing
 
@@ -224,25 +315,31 @@ MIT License - see LICENSE file for details
 
 ## Author
 
-Tony - GitHub: @gh-cs0tony
+Tony - GitHub: @cs0tony
 
 ## Changelog
 
 ### Version 2.0.0
-- Changed from plugin settings to file-based configuration
-- Configuration file location: `~/.codex/plugins-config/custom-additional-context/cac.md`
-- Added cross-platform setup scripts
-- Removed dependency on Codex settings system
-- Simplified configuration process
-- Enhanced documentation with platform-specific commands
-- Improved error handling and logging
+
+- ✅ Added remote setup script execution from GitHub
+- ✅ Changed from plugin settings to file-based configuration
+- ✅ Configuration file location: `~/.codex/plugins-config/custom-additional-context/cac.md`
+- ✅ Added cross-platform setup scripts
+- ✅ One-click setup for all platforms (curl, wget, PowerShell)
+- ✅ Removed dependency on Codex settings system
+- ✅ Simplified configuration process
+- ✅ Enhanced documentation with platform-specific commands
+- ✅ Improved error handling and logging
 
 ### Version 1.0.1
+
 - Initial release with plugin settings configuration
 
 ## Support
 
 For issues and questions:
+
 1. Check the troubleshooting section
 2. Review the log file for error messages
-3. Open an issue in the repository
+3. Test remote script connectivity
+4. Open an issue in the repository

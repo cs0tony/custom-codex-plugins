@@ -1,15 +1,39 @@
 # Quick Usage Guide
 
-## Setup (One Minute)
+## 🚀 One-Click Setup (Recommended)
 
 ### macOS/Linux
 ```bash
-bash ~/.codex/plugins/custom-additional-context/scripts/setup.sh
+# Using curl (Recommended)
+curl -fsSL https://raw.githubusercontent.com/cs0tony/custom-codex-plugins/main/plugins/custom-additional-context/scripts/setup.sh | bash
+
+# Using wget
+wget -qO- https://raw.githubusercontent.com/cs0tony/custom-codex-plugins/main/plugins/custom-additional-context/scripts/setup.sh | bash
 ```
 
 ### Windows PowerShell
 ```powershell
-powershell -ExecutionPolicy Bypass -File "$env:USERPROFILE\.codex\plugins\custom-additional-context\scripts\setup.ps1"
+# One-liner (Recommended)
+irm https://raw.githubusercontent.com/cs0tony/custom-codex-plugins/main/plugins/custom-additional-context/scripts/setup.ps1 | iex
+
+# Alternative
+Invoke-WebRequest -Uri https://raw.githubusercontent.com/cs0tony/custom-codex-plugins/main/plugins/custom-additional-context/scripts/setup.ps1 -OutFile setup.ps1
+powershell -ExecutionPolicy Bypass -File setup.ps1
+Remove-Item setup.ps1
+```
+
+## Manual Setup
+
+### macOS/Linux
+```bash
+mkdir -p ~/.codex/plugins-config/custom-additional-context
+touch ~/.codex/plugins-config/custom-additional-context/cac.md
+```
+
+### Windows PowerShell
+```powershell
+New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.codex\plugins-config\custom-additional-context"
+New-Item -ItemType File -Path "$env:USERPROFILE\.codex\plugins-config\custom-additional-context\cac.md" -Force
 ```
 
 ## Configuration
@@ -47,6 +71,35 @@ If something isn't working, check the logs:
 - **macOS/Linux**: `~/.codex/plugins-config/custom-additional-context/logs/log.txt`
 - **Windows**: `%USERPROFILE%\.codex\plugins-config\custom-additional-context\logs\log.txt`
 
+## Troubleshooting
+
+### Remote Script Issues
+
+**Network problems:**
+```bash
+# Test GitHub connectivity
+curl -I https://raw.githubusercontent.com/cs0tony/custom-codex-plugins/main/plugins/custom-additional-context/scripts/setup.sh
+```
+
+**Certificate errors:**
+```bash
+# Try wget as fallback
+wget -qO- https://raw.githubusercontent.com/cs0tony/custom-codex-plugins/main/plugins/custom-additional-context/scripts/setup.sh | bash
+```
+
+**PowerShell execution policy:**
+```powershell
+# Use bypass flag
+powershell -ExecutionPolicy Bypass -File setup.ps1
+```
+
+### Context Not Appearing
+
+1. Check that `cac.md` exists in the correct location
+2. Verify the file is not empty
+3. Check the log file for errors
+4. Restart Codex if needed
+
 ## Common Use Cases
 
 ### Development Context
@@ -76,19 +129,19 @@ If something isn't working, check the logs:
 - Document API changes
 ```
 
-## Troubleshooting
+## Quick Reference
 
-### Context Not Appearing
-1. Check that `cac.md` exists in the correct location
-2. Verify the file is not empty
-3. Check the log file for errors
-4. Restart Codex if needed
+### Remote Script URLs
+- **Bash**: https://raw.githubusercontent.com/cs0tony/custom-codex-plugins/main/plugins/custom-additional-context/scripts/setup.sh
+- **PowerShell**: https://raw.githubusercontent.com/cs0tony/custom-codex-plugins/main/plugins/custom-additional-context/scripts/setup.ps1
 
-### File Permission Issues
-```bash
-# macOS/Linux
-chmod 644 ~/.codex/plugins-config/custom-additional-context/cac.md
-```
+### Configuration File Paths
+- **macOS/Linux**: `~/.codex/plugins-config/custom-additional-context/cac.md`
+- **Windows**: `%USERPROFILE%\.codex\plugins-config\custom-additional-context\cac.md`
+
+### Log File Paths
+- **macOS/Linux**: `~/.codex/plugins-config/custom-additional-context/logs/log.txt`
+- **Windows**: `%USERPROFILE%\.codex\plugins-config\custom-additional-context\logs\log.txt`
 
 ## Support
 
