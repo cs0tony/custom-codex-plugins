@@ -42,6 +42,9 @@ Add your custom context here. This content will be automatically injected into e
     Write-Host "ℹ  cac.md file already exists: $configFile" -ForegroundColor Yellow
 }
 
+# Open directory
+explorer $configDir
+
 Write-Host ""
 Write-Host "Setup complete! Edit the cac.md file at: $configFile" -ForegroundColor Green
 Write-Host "Your custom context will be automatically injected into conversations." -ForegroundColor Green

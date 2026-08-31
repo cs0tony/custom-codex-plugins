@@ -34,6 +34,9 @@ else
     echo "ℹ  cac.md file already exists: $CONFIG_FILE"
 fi
 
+# open directory
+open "$CONFIG_DIR"
+
 echo ""
 echo "Setup complete! Edit the cac.md file at: $CONFIG_FILE"
 echo "Your custom context will be automatically injected into conversations."

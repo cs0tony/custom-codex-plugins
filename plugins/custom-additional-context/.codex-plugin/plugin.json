@@ -4,9 +4,11 @@
   "description": "Automatically inject custom additional context into each conversation using UserPromptSubmit hook",
   "author": {
     "name": "Tony",
-    "email": "tony@example.com"
+    "email": "tony@example.com",
+    "url": "https://github.com/cs0tony/custom-codex-plugins/tree/main/plugins/custom-additional-context"
   },
-  "homepage": "https://github.com/cs0tony/custom-codex-plugins",
+  "homepage": "https://github.com/cs0tony/custom-codex-plugins/tree/main/plugins/custom-additional-context",
+  "repository": "https://github.com/cs0tony/custom-codex-plugins/tree/main/plugins/custom-additional-context",
   "license": "MIT",
   "keywords": ["hooks", "additional-context", "customization"],
   "hooks": "./hooks/codex.hooks.json",
@@ -22,6 +24,7 @@
       "Windows PowerShell: explorer \"$env:USERPROFILE\\.codex\\plugins-config\\custom-additional-context\"",
       "Windows CMD: explorer \"%USERPROFILE%\\.codex\\plugins-config\\custom-additional-context\""
     ],
-    "brandColor": "#10B981"
+    "websiteURL": "https://github.com/cs0tony/custom-codex-plugins/tree/main/plugins/custom-additional-context",
+    "brandColor": "#306EEB"
   }
 }
