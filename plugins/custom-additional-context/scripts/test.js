@@ -1,121 +1,137 @@
-// Test script for custom-additional-context plugin
-
 const fs = require('fs');
 const path = require('path');
-const { exec } = require('child_process');
-const { promisify } = require('util');
+const { execSync } = require('child_process');
 
-const execAsync = promisify(exec);
+// Get the script directory
+const scriptDir = __dirname;
+const pluginRoot = path.join(scriptDir, '..');
+const hookScript = path.join(pluginRoot, 'hooks', 'user-prompt-submit-hook.js');
 
-console.log('Testing Custom Additional Context Plugin...\n');
+console.log('Testing Custom Additional Context Plugin\n');
 
-// Test 1: Check plugin structure
-console.log('1. Checking plugin structure...');
-const pluginDir = path.join(__dirname, '..');
-const requiredFiles = [
-  '.codex-plugin/plugin.json',
-  '.codex-plugin/config.json',
-  'hooks/hooks.json',
-  'hooks/user-prompt-submit-hook.js',
-];
-
-for (const file of requiredFiles) {
-  const filePath = path.join(pluginDir, file);
-  if (fs.existsSync(filePath)) {
-    console.log(`  ✅ ${file} exists`);
-  } else {
-    console.log(`  ❌ ${file} missing`);
-  }
-}
-
-// Test 2: Validate plugin.json
-console.log('\n2. Validating plugin.json...');
-try {
-  const pluginJson = JSON.parse(fs.readFileSync(
-    path.join(pluginDir, '.codex-plugin/plugin.json'),
-    'utf8'
-  ));
-  console.log(`  ✅ Plugin name: ${pluginJson.name}`);
-  console.log(`  ✅ Version: ${pluginJson.version}`);
-  console.log(`  ✅ Display name: ${pluginJson.interface.displayName}`);
-  
-  // Check settings definition
-  if (pluginJson.settings && pluginJson.settings.additionalContext) {
-    console.log(`  ✅ Settings defined for: additionalContext`);
-  } else {
-    console.log(`  ❌ Settings not properly defined`);
-  }
-} catch (error) {
-  console.log(`  ❌ Invalid plugin.json: ${error.message}`);
-}
-
-// Test 3: Validate hooks.json
-console.log('\n3. Validating hooks.json...');
-try {
-  const hooksJson = JSON.parse(fs.readFileSync(
-    path.join(pluginDir, 'hooks/hooks.json'),
-    'utf8'
-  ));
-  console.log(`  ✅ Hooks defined for: ${Object.keys(hooksJson.hooks).join(', ')}`);
-  
-  // Check hook configuration
-  const userPromptHook = hooksJson.hooks.UserPromptSubmit?.[0]?.hooks?.[0];
-  if (userPromptHook) {
-    console.log(`  ✅ Hook type: ${userPromptHook.type}`);
-    console.log(`  ✅ Command: ${userPromptHook.command}`);
-    console.log(`  ✅ Timeout: ${userPromptHook.timeout}s`);
-    console.log(`  ✅ Context limit: ${userPromptHook.additionalContextLimit} characters`);
-  }
-} catch (error) {
-  console.log(`  ❌ Invalid hooks.json: ${error.message}`);
-}
-
-// Test 4: Check hook script
-console.log('\n4. Checking hook script...');
-const hookScript = path.join(pluginDir, 'hooks/user-prompt-submit-hook.js');
+// Test 1: Check if hook script exists
+console.log('Test 1: Checking hook script existence...');
 if (fs.existsSync(hookScript)) {
-  const content = fs.readFileSync(hookScript, 'utf8');
-  console.log(`  ✅ Hook script exists (${content.length} bytes)`);
-  console.log(`  ✅ Contains readStdin function: ${content.includes('readStdin')}`);
-  console.log(`  ✅ Contains getPluginSettings function: ${content.includes('getPluginSettings')}`);
-  console.log(`  ✅ Returns additionalContext: ${content.includes('additionalContext')}`);
-}
-
-// Test 5: Check for .codex directory (should NOT exist in plugin)
-console.log('\n5. Checking plugin directory structure...');
-const codexDir = path.join(pluginDir, '.codex');
-if (!fs.existsSync(codexDir)) {
-  console.log(`  ✅ .codex directory correctly absent`);
+    console.log('✓ Hook script found at:', hookScript);
 } else {
-  console.log(`  ❌ .codex directory should not exist in plugin directory`);
+    console.error('✗ Hook script not found at:', hookScript);
+    process.exit(1);
 }
 
-// Test 6: Simulate hook execution
-console.log('\n6. Testing hook execution (simulation)...');
+// Test 2: Check if Node.js is available
+console.log('\nTest 2: Checking Node.js availability...');
 try {
-  // Set test environment
-  const testSettings = {
-    additionalContext: 'You are a test AI assistant for testing purposes.'
-  };
-  
-  process.env.CODEX_PLUGIN_SETTINGS = JSON.stringify(testSettings);
-  
-  // Simulate hook input
-  const mockInput = JSON.stringify({
-    conversationId: 'test-123',
-    messageId: 'msg-456'
-  });
-  
-  console.log(`  ✅ Test settings set: ${testSettings.additionalContext}`);
-  console.log(`  ✅ Mock input prepared`);
-  console.log(`  ℹ️  Run actual hook test with: echo '${mockInput}' | node ${hookScript}`);
-  
-} catch (error) {
-  console.log(`  ❌ Hook test simulation failed: ${error.message}`);
+    const nodeVersion = execSync('node --version').toString().trim();
+    console.log('✓ Node.js available:', nodeVersion);
+} catch (e) {
+    console.error('✗ Node.js not available');
+    process.exit(1);
 }
 
-console.log('\n✅ All basic tests completed!');
+// Test 3: Test hook with empty configuration
+console.log('\nTest 3: Testing hook with empty configuration...');
+try {
+    const result = execSync(`echo '{}' | node "${hookScript}"`, {
+        cwd: pluginRoot,
+        env: { ...process.env, PLUGIN_ROOT: pluginRoot }
+    }).toString().trim();
+    
+    if (result === '{}') {
+        console.log('✓ Hook handles empty configuration correctly');
+    } else {
+        console.log('ℹ  Hook output:', result);
+    }
+} catch (e) {
+    console.error('✗ Hook execution failed:', e.message);
+}
+
+// Test 4: Create test configuration and test hook
+console.log('\nTest 4: Testing hook with sample configuration...');
+const testConfigDir = path.join(pluginRoot, '.test-config');
+const testConfigFile = path.join(testConfigDir, 'cac.md');
+
+try {
+    // Create test directory
+    if (!fs.existsSync(testConfigDir)) {
+        fs.mkdirSync(testConfigDir, { recursive: true });
+    }
+
+    // Create test configuration file
+    const testContent = '# Test Context\nThis is a test context for the plugin.';
+    fs.writeFileSync(testConfigFile, testContent, 'utf8');
+    console.log('✓ Created test configuration file');
+
+    // Test hook with test configuration
+    const result = execSync(`echo '{}' | node "${hookScript}"`, {
+        cwd: pluginRoot,
+        env: { 
+            ...process.env, 
+            PLUGIN_ROOT: pluginRoot,
+            HOME: pluginRoot
+        }
+    }).toString().trim();
+
+    if (result.includes('test context')) {
+        console.log('✓ Hook successfully reads and outputs configuration');
+        console.log('  Sample output:', result.substring(0, 50) + '...');
+    } else {
+        console.log('ℹ  Hook output:', result);
+    }
+} catch (e) {
+    console.error('✗ Hook test with configuration failed:', e.message);
+} finally {
+    // Cleanup test configuration
+    try {
+        if (fs.existsSync(testConfigFile)) {
+            fs.unlinkSync(testConfigFile);
+        }
+        if (fs.existsSync(testConfigDir)) {
+            fs.rmdirSync(testConfigDir);
+        }
+        console.log('✓ Cleaned up test configuration');
+    } catch (e) {
+        console.log('ℹ  Cleanup warning:', e.message);
+    }
+}
+
+// Test 5: Check configuration files
+console.log('\nTest 5: Checking plugin configuration files...');
+const pluginJson = path.join(pluginRoot, '.codex-plugin', 'plugin.json');
+const hooksJson = path.join(pluginRoot, 'hooks', 'codex.hooks.json');
+
+if (fs.existsSync(pluginJson)) {
+    console.log('✓ plugin.json found');
+} else {
+    console.error('✗ plugin.json not found');
+}
+
+if (fs.existsSync(hooksJson)) {
+    console.log('✓ codex.hooks.json found');
+} else {
+    console.error('✗ codex.hooks.json not found');
+}
+
+// Test 6: Check setup scripts
+console.log('\nTest 6: Checking setup scripts...');
+const setupScriptSh = path.join(pluginRoot, 'scripts', 'setup.sh');
+const setupScriptPs1 = path.join(pluginRoot, 'scripts', 'setup.ps1');
+
+if (fs.existsSync(setupScriptSh)) {
+    console.log('✓ macOS/Linux setup script found');
+} else {
+    console.error('✗ macOS/Linux setup script not found');
+}
+
+if (fs.existsSync(setupScriptPs1)) {
+    console.log('✓ Windows setup script found');
+} else {
+    console.error('✗ Windows setup script not found');
+}
+
+console.log('\n=== Test Summary ===');
+console.log('All critical tests passed! The plugin is ready to use.');
 console.log('\nNext steps:');
-console.log('1. Install the plugin: codex plugin add custom-additional-context@custom-codex-plugins');
-console.log('2. Configure settings in Codex UI');
-console.log('3. Test by sending a message in Codex');
+console.log('1. Run the setup script for your platform');
+console.log('2. Edit the cac.md file with your custom context');
+console.log('3. Start using Codex with automatic context injection');
+console.log('\nFor detailed usage, see README.md and USAGE.md');

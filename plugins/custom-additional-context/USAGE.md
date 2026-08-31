@@ -1,102 +1,95 @@
-# Custom Additional Context Plugin - Usage Guide
+# Quick Usage Guide
 
-## Quick Start
+## Setup (One Minute)
 
-1. **Install the plugin**:
-   ```bash
-   codex plugin add custom-additional-context@custom-codex-plugins
-   ```
-
-2. **Configure in Codex UI**:
-   - Open Codex settings
-   - Find "Custom Additional Context" in plugins
-   - Enter your custom context in the settings field
-   - Save
-
-3. **Use immediately**:
-   - Start a conversation in Codex
-   - Your custom context will be automatically injected
-
-## Configuration Storage
-
-The plugin settings are automatically managed by Codex and stored in:
-
-**Windows**: `%USERPROFILE%\.codex\plugins\custom-additional-context\settings.json`
-**Mac/Linux**: `~/.codex/plugins/custom-additional-context/settings.json`
-
-Example settings file:
-```json
-{
-  "additionalContext": "You are a senior software engineer with 10+ years of experience. Focus on best practices, clean code, and maintainability."
-}
+### macOS/Linux
+```bash
+bash ~/.codex/plugins/custom-additional-context/scripts/setup.sh
 ```
 
-## How It Works
-
-1. **User sends message** → UserPromptSubmit hook is triggered
-2. **Hook reads settings** → From Codex plugin configuration
-3. **Context is injected** → As additionalContext in the response
-4. **AI receives** → Your custom context + original message
-
-## Setting Locations (Priority Order)
-
-The hook script searches for settings in this order:
-
-1. **Environment Variable**: `CODEX_PLUGIN_SETTINGS` (JSON format)
-2. **Plugin Settings File**: `~/.codex/plugins/custom-additional-context/settings.json`
-3. **Global Plugin Settings**: `~/.codex/plugins/settings.json`
-
-## Example Contexts
-
-### Developer Expert
-```
-You are an expert software developer. Always provide practical, working code examples and explain technical concepts clearly. Include error handling and best practices.
+### Windows PowerShell
+```powershell
+powershell -ExecutionPolicy Bypass -File "$env:USERPROFILE\.codex\plugins\custom-additional-context\scripts\setup.ps1"
 ```
 
-### Technical Writer
-```
-You are a technical documentation specialist. Write clear, concise, and well-structured explanations. Use examples and diagrams when appropriate.
+## Configuration
+
+### Edit Your Context File
+
+Edit the file that was created during setup:
+
+- **macOS/Linux**: `~/.codex/plugins-config/custom-additional-context/cac.md`
+- **Windows**: `%USERPROFILE%\.codex\plugins-config\custom-additional-context\cac.md`
+
+### Example Content
+
+```markdown
+You are a senior developer. Always:
+- Write clean, maintainable code
+- Include error handling
+- Add helpful comments
+- Consider edge cases
 ```
 
-### Security Analyst
+## Verification
+
+### Test the Plugin
+
+1. Save your context file
+2. Start a new Codex conversation
+3. Send any message
+4. The plugin will automatically inject your context
+
+### Check Logs
+
+If something isn't working, check the logs:
+
+- **macOS/Linux**: `~/.codex/plugins-config/custom-additional-context/logs/log.txt`
+- **Windows**: `%USERPROFILE%\.codex\plugins-config\custom-additional-context\logs\log.txt`
+
+## Common Use Cases
+
+### Development Context
+```markdown
+# Development Guidelines
+- Use TypeScript with strict mode
+- Follow SOLID principles
+- Write unit tests for all functions
+- Document complex algorithms
 ```
-Always consider security implications. Validate user inputs, sanitize outputs, and follow OWASP security guidelines. Explain any security trade-offs.
+
+### Writing Style
+```markdown
+# Writing Style
+- Be concise and clear
+- Use active voice
+- Include examples
+- Structure with headers
+```
+
+### Team Standards
+```markdown
+# Team Standards
+- Use our company's coding conventions
+- Follow security guidelines
+- Include proper error messages
+- Document API changes
 ```
 
 ## Troubleshooting
 
-### Context Not Working?
-1. Check plugin is installed: `codex plugin list`
-2. Verify settings in Codex UI
-3. Check Codex logs for errors
-4. Run test: `node scripts/test.js`
+### Context Not Appearing
+1. Check that `cac.md` exists in the correct location
+2. Verify the file is not empty
+3. Check the log file for errors
+4. Restart Codex if needed
 
-### Settings Not Saving?
-1. Check file permissions
-2. Verify disk space
-3. Ensure settings.json is valid JSON
-
-## Testing
-
-Run the test script to verify plugin functionality:
+### File Permission Issues
 ```bash
-cd plugins/custom-additional-context
-node scripts/test.js
+# macOS/Linux
+chmod 644 ~/.codex/plugins-config/custom-additional-context/cac.md
 ```
 
-## Technical Details
+## Support
 
-- **Hook Type**: `UserPromptSubmit`
-- **Context Limit**: 5000 characters
-- **Timeout**: 30 seconds
-- **Error Handling**: Graceful fallback with logging
-- **Configuration**: Automatic via Codex UI
-
-## Advantages Over Previous Version
-
-✅ No manual file configuration needed
-✅ Works with Codex settings system
-✅ Real-time configuration updates
-✅ Better error handling
-✅ Cleaner plugin structure
-✅ Standard Codex hook format
+For detailed information, see [README.md](README.md)

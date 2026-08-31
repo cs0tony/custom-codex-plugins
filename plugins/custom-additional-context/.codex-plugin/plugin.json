@@ -10,24 +10,24 @@
   "license": "MIT",
   "keywords": ["hooks", "additional-context", "customization"],
   "hooks": "./hooks/codex.hooks.json",
-  "settings": {
-    "additionalContext": {
-      "type": "string",
-      "default": "",
-      "description": "Custom additional context that will be injected before each user message in conversations"
-    }
-  },
   "interface": {
     "displayName": "Custom Additional Context",
-    "shortDescription": "Inject custom context into conversations",
-    "longDescription": "This plugin uses the UserPromptSubmit hook to automatically inject custom additional context into each conversation. Configure your custom context in the plugin settings.",
+    "shortDescription": "Inject custom context from cac.md file into conversations",
+    "longDescription": "This plugin uses the UserPromptSubmit hook to automatically inject custom additional context from a cac.md file into each conversation. The cac.md file should be located in ~/.codex/plugins-config/custom-additional-context/. Use the default prompts below to quickly set up the configuration.",
     "developerName": "Tony",
     "category": "Productivity",
-    "capabilities": ["Interactive", "Settings"],
+    "capabilities": ["Interactive"],
     "defaultPrompt": [
-      "Set up my custom additional context for all conversations.",
+      "macOS/Linux bash: open ~/.codex/plugins-config/custom-additional-context",
+      "Windows PowerShell: explorer \"$env:USERPROFILE\\.codex\\plugins-config\\custom-additional-context\"",
+      "Windows CMD: explorer \"%USERPROFILE%\\.codex\\plugins-config\\custom-additional-context\"",
+      "macOS/Linux: mkdir -p ~/.codex/plugins-config/custom-additional-context && touch ~/.codex/plugins-config/custom-additional-context/cac.md",
+      "Set up my custom additional context from cac.md file.",
+      "Help me create the cac.md configuration file.",
+      "哈哈哈",
       "Configure additional context to be injected automatically.",
-      "Add custom instructions for AI responses."
+      "Windows PowerShell: New-Item -ItemType Directory -Force -Path \"$env:USERPROFILE\\.codex\\plugins-config\\custom-additional-context\"; New-Item -ItemType File -Path \"$env:USERPROFILE\\.codex\\plugins-config\\custom-additional-context\\cac.md\" -Force",
+      "Windows CMD: explorer \"%USERPROFILE%\\.codex\\plugins-config\\custom-additional-context\""
     ],
     "brandColor": "#10B981"
   }

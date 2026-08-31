@@ -1,8 +1,0 @@
-{
-  "pluginVersion": "2.0.0",
-  "configVersion": "1.0.0",
-  "features": {
-    "hooks": true,
-    "settings": false
-  }
-}

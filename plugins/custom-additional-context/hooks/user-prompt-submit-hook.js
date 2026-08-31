@@ -9,7 +9,7 @@ function getLogFilePath() {
   const logDir = path.join(
     process.env.HOME || process.env.USERPROFILE || process.cwd(),
     '.codex',
-    'plugins',
+    'plugins-config',
     'custom-additional-context',
     'logs'
   );
@@ -34,29 +34,15 @@ function getLogFilePath() {
 
 /**
  * Write log entry with timestamp and result
- * @param {Object} result - The result object to log
+ * @param {string} result - The result object to log
  * @param {Object} input - The input object (optional, for context)
  */
 function writeToLogFile(result, input = {}) {
   try {
     const logFilePath = getLogFilePath();
     const timestamp = new Date().toISOString();
-    const logEntry = {
-      timestamp,
-      input: {
-        conversationId: input.conversationId || 'unknown',
-        messageId: input.messageId || 'unknown'
-      },
-      result: {
-        hasContext: !!(result.hookSpecificOutput && result.hookSpecificOutput.additionalContext),
-        contextLength:
-          result.hookSpecificOutput && result.hookSpecificOutput.additionalContext
-            ? result.hookSpecificOutput.additionalContext.length
-            : 0
-      }
-    };
 
-    const logLine = `${timestamp} | ${JSON.stringify(logEntry)}\n`;
+    const logLine = `${timestamp} | ${result}\n`;
     fs.appendFileSync(logFilePath, logLine, 'utf8');
   } catch (error) {
     console.error('Failed to write to log file:', error.message);
@@ -84,59 +70,25 @@ function readStdin() {
 }
 
 /**
- * Read plugin settings from Codex configuration
- * @returns {string} The custom additional context text
+ * Read custom context from local cac.md file
+ * @returns {string} The custom additional context text from cac.md
  */
-function getPluginSettings() {
-  // Method 1: Try environment variable
-  if (process.env.CODEX_PLUGIN_SETTINGS) {
-    try {
-      const settings = JSON.parse(process.env.CODEX_PLUGIN_SETTINGS);
-      if (settings.additionalContext) {
-        return settings.additionalContext;
-      }
-    } catch (e) {
-      console.error('Failed to parse CODEX_PLUGIN_SETTINGS:', e.message);
-    }
-  }
-
-  // Method 2: Try plugin-specific settings file
-  const pluginName = 'custom-additional-context';
-  const settingsDir = path.join(
+function getCustomContextFromFile() {
+  // Read cac.md from the plugin configuration directory
+  const configDir = path.join(
     process.env.HOME || process.env.USERPROFILE || process.cwd(),
     '.codex',
-    'plugins',
-    pluginName,
-    'settings.json'
+    'plugins-config',
+    'custom-additional-context'
   );
+  const cacMdPath = path.join(configDir, 'cac.md');
 
-  if (fs.existsSync(settingsDir)) {
+  if (fs.existsSync(cacMdPath)) {
     try {
-      const settings = JSON.parse(fs.readFileSync(settingsDir, 'utf8'));
-      if (settings.additionalContext) {
-        return settings.additionalContext;
-      }
+      const content = fs.readFileSync(cacMdPath, 'utf8');
+      return content.trim();
     } catch (e) {
-      console.error(`Failed to read plugin settings from ${settingsDir}:`, e.message);
-    }
-  }
-
-  // Method 3: Try global plugin settings
-  const globalSettingsPath = path.join(
-    process.env.HOME || process.env.USERPROFILE || process.cwd(),
-    '.codex',
-    'plugins',
-    'settings.json'
-  );
-
-  if (fs.existsSync(globalSettingsPath)) {
-    try {
-      const globalSettings = JSON.parse(fs.readFileSync(globalSettingsPath, 'utf8'));
-      if (globalSettings[pluginName] && globalSettings[pluginName].additionalContext) {
-        return globalSettings[pluginName].additionalContext;
-      }
-    } catch (e) {
-      console.error(`Failed to read global plugin settings from ${globalSettingsPath}:`, e.message);
+      console.error(`Failed to read cac.md from ${cacMdPath}:`, e.message);
     }
   }
 
@@ -148,29 +100,21 @@ async function main() {
     // Read hook input
     const input = await readStdin();
 
-    // Get plugin settings
-    const customContext = getPluginSettings();
+    // Get custom context from cac.md file
+    const customContext = getCustomContextFromFile();
 
     // If no custom context, return empty object
     if (!customContext.trim()) {
       console.log(JSON.stringify({}));
       // Log that no context was found
-      writeToLogFile({}, input);
+      writeToLogFile('', input);
       return;
     }
 
-    // Return additional context response
-    const result = {
-      hookSpecificOutput: {
-        hookEventName: 'UserPromptSubmit',
-        additionalContext: customContext
-      }
-    };
-
     // 将当前时间和result写入log.txt日志文件
-    writeToLogFile(result, input);
+    writeToLogFile(customContext, input);
 
-    console.log(JSON.stringify(result));
+    console.log(customContext);
   } catch (error) {
     console.error('Hook error:', error.message);
     console.log(JSON.stringify({}));
